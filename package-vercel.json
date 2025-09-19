@@ -1,0 +1,27 @@
+{
+  "name": "via-resorts-dashboard",
+  "version": "1.0.0",
+  "description": "Via Resorts Intelligence Dashboard - Unified SEO, Website & Ads Performance",
+  "main": "dashboard-preview.html",
+  "scripts": {
+    "build": "echo 'Static HTML deployment - no build needed'",
+    "start": "echo 'Static HTML deployment - no start needed'"
+  },
+  "keywords": [
+    "dashboard",
+    "via-resorts",
+    "seo",
+    "analytics",
+    "google-ads",
+    "intelligence"
+  ],
+  "author": "Via Resorts Team",
+  "license": "Private",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/via-resorts-dashboard"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
