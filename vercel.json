@@ -1,12 +1,9 @@
 {
   "version": 2,
   "name": "via-resorts-dashboard",
-  "builds": [
-    {
-      "src": "dashboard-preview.html",
-      "use": "@vercel/static"
-    }
-  ],
+  "buildCommand": "echo 'Static HTML - no build needed'",
+  "outputDirectory": ".",
+  "installCommand": "echo 'No dependencies to install'",
   "routes": [
     {
       "src": "/",
@@ -15,6 +12,10 @@
     {
       "src": "/dashboard",
       "dest": "/dashboard-preview.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ],
   "headers": [
