@@ -5,10 +5,6 @@
     {
       "src": "dashboard-preview.html",
       "use": "@vercel/static"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -19,6 +15,17 @@
     {
       "src": "/dashboard",
       "dest": "/dashboard-preview.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
     }
   ]
 }
