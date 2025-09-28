@@ -1,9 +1,9 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Via Resorts - Intelligence Dashboard</title>
+    <title>Via Resorts - Unified Intelligence Dashboard</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -11,30 +11,10 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
             line-height: 1.6;
-            min-height: 100vh;
         }
-        .app {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
+        /* Executive Summary Bar */
         .executive-summary {
             background: rgba(255,255,255,0.95);
             border-radius: 15px;
@@ -44,33 +24,45 @@
             justify-content: space-around;
             align-items: center;
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
         }
         .summary-item {
             text-align: center;
-            flex: 1;
         }
         .summary-value {
             font-size: 1.8em;
             font-weight: bold;
             color: #667eea;
-            display: block;
         }
         .summary-label {
             color: #666;
             font-size: 0.9em;
-            margin-top: 5px;
         }
-        .dashboard-container {
+        
+        /* Header */
+        .header { 
+            text-align: center; 
+            color: white; 
+            margin-bottom: 30px; 
+        }
+        .header h1 { 
+            font-size: 2.5em; 
+            margin-bottom: 10px; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .header p { 
+            font-size: 1.2em; 
+            opacity: 0.9; 
+        }
+        
+        /* Tab Navigation */
+        .tab-container {
             background: white;
             border-radius: 15px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
             overflow: hidden;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            margin-bottom: 20px;
         }
-        .tab-navigation {
+        .tab-nav {
             display: flex;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -83,31 +75,23 @@
             font-size: 1.1em;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
+            transition: background 0.3s ease;
         }
         .tab-button:hover {
             background: rgba(255,255,255,0.1);
-            transform: translateY(-2px);
         }
         .tab-button.active {
             background: rgba(255,255,255,0.2);
-            box-shadow: inset 0 -3px 0 rgba(255,255,255,0.5);
-        }
-        .tab-button.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: white;
         }
         .tab-content {
-            flex: 1;
+            display: none;
             padding: 30px;
-            overflow-y: auto;
         }
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Module Styles */
         .module-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -119,25 +103,16 @@
             border-radius: 10px;
             padding: 20px;
             border-left: 4px solid #667eea;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .module-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .module-title {
             font-size: 1.3em;
             font-weight: bold;
             color: #333;
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         .metric-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             padding: 8px 0;
             border-bottom: 1px solid #eee;
         }
@@ -146,222 +121,312 @@
         }
         .metric-label {
             color: #666;
-            flex: 1;
         }
         .metric-value {
             font-weight: bold;
             color: #333;
-            text-align: right;
         }
+        
+        /* Action Queue */
+        .action-queue {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .queue-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .queue-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .action-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #28a745;
+        }
+        .action-item.high {
+            border-left-color: #dc3545;
+        }
+        .action-item.medium {
+            border-left-color: #ffc107;
+        }
+        .action-category {
+            font-weight: bold;
+            color: #333;
+        }
+        .action-description {
+            color: #666;
+            margin: 5px 0;
+        }
+        .action-impact {
+            font-size: 0.9em;
+            color: #28a745;
+        }
+        .action-details {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
+        }
+        .action-details small {
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        /* Geographic Tabs for SEO */
         .geo-tabs {
             display: flex;
             margin-bottom: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 4px;
         }
         .geo-tab {
-            flex: 1;
-            padding: 12px 20px;
-            background: transparent;
+            padding: 10px 20px;
+            background: #e9ecef;
             border: none;
             cursor: pointer;
-            border-radius: 6px;
-            font-weight: 500;
-            transition: all 0.2s ease;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
         }
         .geo-tab.active {
             background: #667eea;
             color: white;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
-        .geo-tab:hover:not(.active) {
-            background: rgba(102, 126, 234, 0.1);
+        .geo-content {
+            display: none;
         }
-        .timestamp {
-            text-align: center;
-            color: rgba(255,255,255,0.8);
-            font-size: 0.9em;
-            margin-top: 20px;
-            padding: 10px;
+        .geo-content.active {
+            display: block;
         }
-        .status-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-        .status-indicator.healthy {
-            background: #28a745;
-        }
-        .status-indicator.warning {
-            background: #ffc107;
-        }
-        .status-indicator.critical {
-            background: #dc3545;
+        
+        .timestamp { 
+            text-align: center; 
+            color: #666; 
+            font-size: 0.9em; 
+            margin-top: 20px; 
         }
     </style>
 </head>
 <body>
-    <div class="app">
-        <header class="header">
+    <div class="container">
+        <div class="header">
             <h1>🏨 Via Resorts Intelligence Dashboard</h1>
             <p>Unified SEO, Website & Ads Performance</p>
-        </header>
+        </div>
 
-        <!-- Executive Summary -->
+        <!-- Executive Summary Bar -->
         <div class="executive-summary">
             <div class="summary-item">
-                <span class="summary-value">
-                    <span class="status-indicator healthy"></span>
-                    Strong
-                </span>
+                <div class="summary-value">Needs Attention</div>
                 <div class="summary-label">Portfolio Health</div>
             </div>
             <div class="summary-item">
-                <span class="summary-value">$320</span>
+                <div class="summary-value">$0</div>
                 <div class="summary-label">Daily Revenue</div>
             </div>
             <div class="summary-item">
-                <span class="summary-value">10</span>
+                <div class="summary-value">10</div>
                 <div class="summary-label">Priority Alerts</div>
             </div>
             <div class="summary-item">
-                <span class="summary-value">7</span>
+                <div class="summary-value">7</div>
                 <div class="summary-label">Actions Due</div>
             </div>
         </div>
 
-        <!-- Dashboard Container -->
-        <div class="dashboard-container">
-            <nav class="tab-navigation">
+        <!-- Tab Navigation -->
+        <div class="tab-container">
+            <div class="tab-nav">
                 <button class="tab-button active" onclick="showTab('seo')">🔍 SEO Intelligence</button>
                 <button class="tab-button" onclick="showTab('website')">📊 Website Performance</button>
                 <button class="tab-button" onclick="showTab('ads')">💰 Ads Management</button>
                 <button class="tab-button" onclick="showTab('actions')">🎯 Action Queue</button>
-            </nav>
+            </div>
 
             <!-- SEO Intelligence Tab -->
-            <div id="seo" class="tab-content">
+            <div id="seo" class="tab-content active">
                 <div class="geo-tabs">
-                    <button class="geo-tab active" onclick="showGeo('bali')">🏝️ Bali</button>
-                    <button class="geo-tab" onclick="showGeo('kuta')">🏖️ Kuta</button>
+                    <button class="geo-tab active" onclick="showGeo('bali')">Bali</button>
+                    <button class="geo-tab" onclick="showGeo('thailand')">Thailand</button>
                 </div>
                 
-                <div id="bali" class="geo-content">
+                <div id="bali" class="geo-content active">
                     <div class="module-grid">
                         <div class="module-card">
                             <div class="module-title">🚀 Quick Wins</div>
-                            <div class="metric-item">
-                                <span class="metric-label">bali packages australia</span>
-                                <span class="metric-value">Conversion rate boost: 20-30%</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">bali resort deals</span>
-                                <span class="metric-value">Revenue potential: $2,000+/month</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">bali luxury resorts</span>
-                                <span class="metric-value">Organic traffic: +500 visitors/month</span>
-                            </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">Conversion rate boost: 20-30%</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">Conversion rate boost: 20-30%</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">Conversion rate boost: 20-30%</span>
+                                </div>
+                            
                         </div>
                         <div class="module-card">
                             <div class="module-title">💡 New Opportunities</div>
-                            <div class="metric-item">
-                                <span class="metric-label">bali honeymoon packages</span>
-                                <span class="metric-value">$1,200/month potential</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">bali family resorts</span>
-                                <span class="metric-value">$800/month potential</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">bali beach resorts</span>
-                                <span class="metric-value">$600/month potential</span>
-                            </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">$800/month potential</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">$800/month potential</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">$800/month potential</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">$800/month potential</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">$800/month potential</span>
+                                </div>
+                            
                         </div>
                         <div class="module-card">
                             <div class="module-title">👀 Competitor Movements</div>
-                            <div class="metric-item">
-                                <span class="metric-label">Competitor A</span>
-                                <span class="metric-value">New keyword: bali eco resorts</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">Competitor B</span>
-                                <span class="metric-value">New keyword: bali yoga retreats</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">Competitor C</span>
-                                <span class="metric-value">New keyword: bali cultural tours</span>
-                            </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">Unknown</span>
+                                    <span class="metric-value">New opportunity detected</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">Market Analysis</span>
+                                    <span class="metric-value">New opportunity detected</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">Market Analysis</span>
+                                    <span class="metric-value">New opportunity detected</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">Market Analysis</span>
+                                    <span class="metric-value">New opportunity detected</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">Market Analysis</span>
+                                    <span class="metric-value">New opportunity detected</span>
+                                </div>
+                            
                         </div>
                     </div>
                 </div>
                 
-                <div id="kuta" class="geo-content" style="display: none;">
+                <div id="thailand" class="geo-content">
                     <div class="module-grid">
                         <div class="module-card">
                             <div class="module-title">🚀 Quick Wins</div>
-                            <div class="metric-item">
-                                <span class="metric-label">kuta packages australia</span>
-                                <span class="metric-value">Conversion rate boost: 20-30%</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">kuta resort deals</span>
-                                <span class="metric-value">Revenue potential: $1,500+/month</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">kuta luxury resorts</span>
-                                <span class="metric-value">Organic traffic: +300 visitors/month</span>
-                            </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">Conversion rate boost: 20-30%</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">Conversion rate boost: 20-30%</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">Conversion rate boost: 20-30%</span>
+                                </div>
+                            
                         </div>
                         <div class="module-card">
                             <div class="module-title">💡 New Opportunities</div>
-                            <div class="metric-item">
-                                <span class="metric-label">kuta honeymoon packages</span>
-                                <span class="metric-value">$900/month potential</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">kuta family resorts</span>
-                                <span class="metric-value">$600/month potential</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">kuta beach resorts</span>
-                                <span class="metric-value">$500/month potential</span>
-                            </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">$800/month potential</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">$800/month potential</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">$800/month potential</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">$800/month potential</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">bali packages australia</span>
+                                    <span class="metric-value">$800/month potential</span>
+                                </div>
+                            
                         </div>
                         <div class="module-card">
                             <div class="module-title">👀 Competitor Movements</div>
-                            <div class="metric-item">
-                                <span class="metric-label">Competitor A</span>
-                                <span class="metric-value">New keyword: kuta eco resorts</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">Competitor B</span>
-                                <span class="metric-value">New keyword: kuta yoga retreats</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">Competitor C</span>
-                                <span class="metric-value">New keyword: kuta cultural tours</span>
-                            </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">Unknown</span>
+                                    <span class="metric-value">New opportunity detected</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">Market Analysis</span>
+                                    <span class="metric-value">New opportunity detected</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">Market Analysis</span>
+                                    <span class="metric-value">New opportunity detected</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">Market Analysis</span>
+                                    <span class="metric-value">New opportunity detected</span>
+                                </div>
+                            
+                                <div class="metric-item">
+                                    <span class="metric-label">Market Analysis</span>
+                                    <span class="metric-value">New opportunity detected</span>
+                                </div>
+                            
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Website Performance Tab -->
-            <div id="website" class="tab-content" style="display: none;">
+            <div id="website" class="tab-content">
                 <div class="module-grid">
                     <div class="module-card">
                         <div class="module-title">📈 Traffic Health</div>
                         <div class="metric-item">
                             <span class="metric-label">Daily Visits</span>
-                            <span class="metric-value">1,250</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">Target Visits</span>
-                            <span class="metric-value">1,200</span>
+                            <span class="metric-value">1250</span>
                         </div>
                         <div class="metric-item">
                             <span class="metric-label">Conversion Rate</span>
@@ -374,18 +439,17 @@
                     </div>
                     <div class="module-card">
                         <div class="module-title">📄 Content Performance</div>
-                        <div class="metric-item">
-                            <span class="metric-label">/bali-resorts</span>
-                            <span class="metric-value">450 visits, 12 conv</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">/kuta-resorts</span>
-                            <span class="metric-value">320 visits, 8 conv</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">/packages</span>
-                            <span class="metric-value">280 visits, 6 conv</span>
-                        </div>
+                        
+                            <div class="metric-item">
+                                <span class="metric-label">/bali-resorts</span>
+                                <span class="metric-value">12 conv</span>
+                            </div>
+                        
+                            <div class="metric-item">
+                                <span class="metric-label">/thailand-resorts</span>
+                                <span class="metric-value">8 conv</span>
+                            </div>
+                        
                     </div>
                     <div class="module-card">
                         <div class="module-title">🔄 Attribution Analysis</div>
@@ -397,123 +461,171 @@
                             <span class="metric-label">Meta Conversion</span>
                             <span class="metric-value">90%</span>
                         </div>
-                        <div class="metric-item">
-                            <span class="metric-label">Direct Booking</span>
-                            <span class="metric-value">12%</span>
-                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Ads Management Tab -->
-            <div id="ads" class="tab-content" style="display: none;">
+            <div id="ads" class="tab-content">
                 <div class="module-grid">
                     <div class="module-card">
                         <div class="module-title">💊 Campaign Health</div>
-                        <div class="metric-item">
-                            <span class="metric-label">VIARESORTS BRANDING</span>
-                            <span class="metric-value">2.74:1 ROAS ⭐</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">SEPTEMBER 2025 CAMPAIGN PM</span>
-                            <span class="metric-value">1.84:1 ROAS 📈</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">BALI PACKAGES</span>
-                            <span class="metric-value">2.15:1 ROAS ✅</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">KUTA PACKAGES</span>
-                            <span class="metric-value">1.65:1 ROAS 🔧</span>
-                        </div>
+                        
+                            <div class="metric-item">
+                                <span class="metric-label">VIARESORTS BRANDING</span>
+                                <span class="metric-value">2.74:1 ROAS</span>
+                            </div>
+                        
+                            <div class="metric-item">
+                                <span class="metric-label">SEPTEMBER 2025 CAMPAIGN PM</span>
+                                <span class="metric-value">1.84:1 ROAS</span>
+                            </div>
+                        
                     </div>
                     <div class="module-card">
                         <div class="module-title">⚡ Optimization Queue</div>
-                        <div class="metric-item">
-                            <span class="metric-label">VIARESORTS BRANDING</span>
-                            <span class="metric-value">Scale budget by 50%</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">KUTA PACKAGES</span>
-                            <span class="metric-value">Review targeting</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">BALI PACKAGES</span>
-                            <span class="metric-value">Test new ad copy</span>
-                        </div>
+                        
+                            <div class="metric-item">
+                                <span class="metric-label">VIARESORTS BRANDING</span>
+                                <span class="metric-value">HIGH</span>
+                            </div>
+                        
                     </div>
                     <div class="module-card">
                         <div class="module-title">🔗 Cross-Platform Attribution</div>
                         <div class="metric-item">
                             <span class="metric-label">Google Discovery</span>
-                            <span class="metric-value">$4,405.83</span>
+                            <span class="metric-value">$4405.83</span>
                         </div>
                         <div class="metric-item">
                             <span class="metric-label">Meta Conversion</span>
-                            <span class="metric-value">$8,645.14</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">Cross-Platform ROAS</span>
-                            <span class="metric-value">1.96:1</span>
+                            <span class="metric-value">$8645.139</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Action Queue Tab -->
-            <div id="actions" class="tab-content" style="display: none;">
-                <div class="module-grid">
-                    <div class="module-card">
-                        <div class="module-title">📅 Today</div>
-                        <div class="metric-item">
-                            <span class="metric-label">SEO Quick Win</span>
-                            <span class="metric-value">Optimize "bali packages australia"</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">Ads Optimization</span>
-                            <span class="metric-value">Scale VIARESORTS BRANDING budget</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">SEO Quick Win</span>
-                            <span class="metric-value">Optimize "kuta packages australia"</span>
-                        </div>
+            <div id="actions" class="tab-content">
+                <div class="action-queue">
+                    <div class="queue-section">
+                        <div class="queue-title">📅 Today</div>
+                        
+                            <div class="action-item high">
+                                <div class="action-category">SEO Quick Win</div>
+                                <div class="action-description">Optimize for "bali packages australia" - Not ranked</div>
+                                <div class="action-impact">Conversion rate boost: 20-30%</div>
+                                <div class="action-details">
+                                    <small>Revenue Impact: >$500/month | Time: <2 hours</small>
+                                    <br><small>Context: Immediate ranking improvement opportunity</small>
+                                </div>
+                            </div>
+                        
+                            <div class="action-item high">
+                                <div class="action-category">SEO Quick Win</div>
+                                <div class="action-description">Optimize for "bali packages australia" - Not ranked</div>
+                                <div class="action-impact">Conversion rate boost: 20-30%</div>
+                                <div class="action-details">
+                                    <small>Revenue Impact: >$500/month | Time: <2 hours</small>
+                                    <br><small>Context: Immediate ranking improvement opportunity</small>
+                                </div>
+                            </div>
+                        
+                            <div class="action-item high">
+                                <div class="action-category">SEO Quick Win</div>
+                                <div class="action-description">Optimize for "bali packages australia" - Not ranked</div>
+                                <div class="action-impact">Conversion rate boost: 20-30%</div>
+                                <div class="action-details">
+                                    <small>Revenue Impact: >$500/month | Time: <2 hours</small>
+                                    <br><small>Context: Immediate ranking improvement opportunity</small>
+                                </div>
+                            </div>
+                        
+                            <div class="action-item high">
+                                <div class="action-category">SEO Quick Win</div>
+                                <div class="action-description">Optimize for "bali packages australia" - Not ranked</div>
+                                <div class="action-impact">Conversion rate boost: 20-30%</div>
+                                <div class="action-details">
+                                    <small>Revenue Impact: >$500/month | Time: <2 hours</small>
+                                    <br><small>Context: Immediate ranking improvement opportunity</small>
+                                </div>
+                            </div>
+                        
+                            <div class="action-item high">
+                                <div class="action-category">SEO Quick Win</div>
+                                <div class="action-description">Optimize for "bali packages australia" - Not ranked</div>
+                                <div class="action-impact">Conversion rate boost: 20-30%</div>
+                                <div class="action-details">
+                                    <small>Revenue Impact: >$500/month | Time: <2 hours</small>
+                                    <br><small>Context: Immediate ranking improvement opportunity</small>
+                                </div>
+                            </div>
+                        
+                            <div class="action-item high">
+                                <div class="action-category">SEO Quick Win</div>
+                                <div class="action-description">Optimize for "bali packages australia" - Not ranked</div>
+                                <div class="action-impact">Conversion rate boost: 20-30%</div>
+                                <div class="action-details">
+                                    <small>Revenue Impact: >$500/month | Time: <2 hours</small>
+                                    <br><small>Context: Immediate ranking improvement opportunity</small>
+                                </div>
+                            </div>
+                        
+                            <div class="action-item high">
+                                <div class="action-category">Ads Optimization</div>
+                                <div class="action-description">Scale budget by 50% - excellent performance</div>
+                                <div class="action-impact">+$831 additional revenue</div>
+                                <div class="action-details">
+                                    <small>Revenue Impact: >$500/month | Time: <2 hours</small>
+                                    <br><small>Context: Campaign performance optimization</small>
+                                </div>
+                            </div>
+                        
                     </div>
-                    <div class="module-card">
-                        <div class="module-title">📆 This Week</div>
-                        <div class="metric-item">
-                            <span class="metric-label">Ads Testing</span>
-                            <span class="metric-value">Test new ad copy for BALI PACKAGES</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">SEO Testing</span>
-                            <span class="metric-value">Test "bali honeymoon packages"</span>
-                        </div>
+                    <div class="queue-section">
+                        <div class="queue-title">📆 This Week</div>
+                        
                     </div>
-                    <div class="module-card">
-                        <div class="module-title">📅 This Month</div>
-                        <div class="metric-item">
-                            <span class="metric-label">Strategic Initiative</span>
-                            <span class="metric-value">Bali Market Expansion</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">SEO Strategy</span>
-                            <span class="metric-value">Develop 5 high-impact keywords</span>
-                        </div>
+                    <div class="queue-section">
+                        <div class="queue-title">📅 This Month</div>
+                        
+                            <div class="action-item strategic">
+                                <div class="action-category">Strategic Initiative</div>
+                                <div class="action-description">Thailand Market Expansion - Complete SEO Strategy</div>
+                                <div class="action-impact">High revenue potential - $2,000+/month</div>
+                                <div class="action-details">
+                                    <small>Revenue Impact: $2,000+/month | Time: 2-4 weeks</small>
+                                    <br><small>Context: Geographic expansion to capture new market</small>
+                                    <br><small>Success Metrics: Market penetration, brand awareness, booking volume</small>
+                                </div>
+                            </div>
+                        
+                            <div class="action-item strategic">
+                                <div class="action-category">SEO Strategy</div>
+                                <div class="action-description">Develop comprehensive strategy for 10 high-impact keywords</div>
+                                <div class="action-impact">High revenue potential - $1,500+/month</div>
+                                <div class="action-details">
+                                    <small>Revenue Impact: $1,500+/month | Time: 2-3 weeks</small>
+                                    <br><small>Context: Long-term organic growth strategy</small>
+                                    <br><small>Success Metrics: Top 3 rankings, organic traffic growth, conversion rate improvement</small>
+                                </div>
+                            </div>
+                        
                     </div>
                 </div>
             </div>
         </div>
 
-        <footer class="timestamp">
-            Last Updated: <span id="timestamp"></span>
-        </footer>
+        <div class="timestamp">
+            Last Updated: 9/28/2025, 7:03:15 PM
+        </div>
     </div>
 
     <script>
         function showTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
-                content.style.display = 'none';
+                content.classList.remove('active');
             });
             
             // Remove active class from all tab buttons
@@ -522,7 +634,7 @@
             });
             
             // Show selected tab content
-            document.getElementById(tabName).style.display = 'block';
+            document.getElementById(tabName).classList.add('active');
             
             // Add active class to clicked button
             event.target.classList.add('active');
@@ -531,7 +643,7 @@
         function showGeo(geoName) {
             // Hide all geo contents
             document.querySelectorAll('.geo-content').forEach(content => {
-                content.style.display = 'none';
+                content.classList.remove('active');
             });
             
             // Remove active class from all geo tabs
@@ -540,15 +652,11 @@
             });
             
             // Show selected geo content
-            document.getElementById(geoName).style.display = 'block';
+            document.getElementById(geoName).classList.add('active');
             
             // Add active class to clicked tab
             event.target.classList.add('active');
         }
-
-        
-        // Update timestamp
-        document.getElementById('timestamp').textContent = new Date().toLocaleString();
     </script>
 </body>
 </html>
